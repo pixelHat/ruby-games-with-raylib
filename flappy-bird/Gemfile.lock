@@ -1,0 +1,16 @@
+GEM
+  specs:
+    ffi (1.16.3)
+    opengl-bindings2 (2.0.1)
+    raylib-bindings (0.6.0-x86_64-linux)
+      ffi (~> 1.16)
+      opengl-bindings2 (~> 2)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  raylib-bindings
+
+BUNDLED WITH
+   2.4.22
