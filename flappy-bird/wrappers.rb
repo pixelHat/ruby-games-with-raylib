@@ -30,8 +30,11 @@ end
 # The Texture class loads and stores texture assets used for rendering sprites and images.
 # It handles loading the image data and creating the OpenGL texture.
 class Texture
+  @@textures = {}
+
   def initialize(path, rotation = 0, scale = 1, color = WHITE)
-    @texture = LoadTexture(path)
+    @@textures[path] = LoadTexture(path) if @@textures[path].nil?
+    @texture = @@textures[path]
     @rotation = rotation
     @scale = scale
     @color = color
@@ -49,8 +52,8 @@ class Texture
     @texture.width
   end
 
-  def unload
-    UnloadTexture(@texture)
+  def self.unload
+    @@textures.each_value { |texture| UnloadTexture(texture) }
   end
 end
 
@@ -70,5 +73,9 @@ class Parallax
 
   def unload
     @texture.unload
+  end
+
+  def height
+    @texture.height
   end
 end

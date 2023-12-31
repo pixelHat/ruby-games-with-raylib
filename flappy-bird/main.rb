@@ -3,6 +3,7 @@
 require_relative 'setup'
 require_relative 'wrappers'
 require_relative 'bird'
+require_relative 'pipe'
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -23,12 +24,27 @@ textures = {
 }
 
 bird = Bird.new
+pipes = []
+timer = 0
 
 until WindowShouldClose()
   bird.update GetFrameTime()
 
+  timer += GetFrameTime()
+
+  if timer > 1
+    pipes.append(Pipe.new(textures[:ground].height))
+    timer = 0
+  end
+
+  pipes.each do |pipe|
+    pipe.update
+    pipes.delete(pipe) if pipe.pos.x < -pipe.texture.width
+  end
+
   BeginDrawing()
   textures[:background].draw
+  pipes.each(&:draw)
   textures[:ground].draw
   bird.draw
   EndDrawing()
@@ -37,8 +53,7 @@ end
 sounds.each_pair do |_, texture|
   UnloadSound(texture)
 end
-textures.each_pair do |_, texture|
-  texture.unload
-end
+Texture.unload
+
 CloseAudioDevice()
 CloseWindow()
