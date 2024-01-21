@@ -19,4 +19,17 @@ class Bird
     @dy += @gravity * delta_time
     @vec.y += @dy
   end
+
+  def collides?(pipe)
+    CheckCollisionRecs(pipe.rectangle, rectangle)
+  end
+
+  def rectangle
+    rect = Rectangle.new
+    rect.x = @vec.x
+    rect.y = @vec.y
+    rect.width = @texture.width
+    rect.height = @texture.height
+    rect
+  end
 end

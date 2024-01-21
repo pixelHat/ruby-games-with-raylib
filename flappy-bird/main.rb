@@ -4,6 +4,11 @@ require_relative 'setup'
 require_relative 'wrappers'
 require_relative 'bird'
 require_relative 'pipe'
+require_relative 'pipePair'
+require_relative 'stateMachine'
+require_relative 'states/playState'
+require_relative 'states/titleScreenState'
+require_relative 'states/scoreScreenState'
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -18,35 +23,27 @@ sounds = {
   wall_hit: LoadSound('sounds/wall_hit.wav')
 }
 
-textures = {
+$textures = {
   background: Parallax.new(Texture.new('assets/background.png', 0, 2.5, WHITE), 60, 413 * 2.5, Vector.new(0, 0)),
   ground: Parallax.new(Texture.new('assets/ground.png', 0, 2, WHITE), 120, 800, Vector.new(0, SCREEN_HEIGHT - 32))
 }
 
-bird = Bird.new
-pipes = []
-timer = 0
+$state_machine = StateMachine.new(
+  {
+    playState: PlayState,
+    titleScreenState: TitleScreenState,
+    scoreScreenState: ScoreScreenState
+  }
+)
+$state_machine.change(:titleScreenState)
+$score = 10
 
 until WindowShouldClose()
-  bird.update GetFrameTime()
-
-  timer += GetFrameTime()
-
-  if timer > 1
-    pipes.append(Pipe.new(textures[:ground].height))
-    timer = 0
-  end
-
-  pipes.each do |pipe|
-    pipe.update
-    pipes.delete(pipe) if pipe.pos.x < -pipe.texture.width
-  end
-
+  $state_machine.update
   BeginDrawing()
-  textures[:background].draw
-  pipes.each(&:draw)
-  textures[:ground].draw
-  bird.draw
+  $textures[:background].draw
+  $state_machine.render
+  $textures[:ground].draw
   EndDrawing()
 end
 
